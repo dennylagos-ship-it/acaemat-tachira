@@ -232,6 +232,9 @@
     } else if (k === "text") {
       body += '<label>Contenido<textarea rows="12" data-body placeholder="## Subtítulo&#10;&#10;Párrafo de texto…&#10;&#10;- Punto de lista&#10;- **Texto en negrita**">' + A.esc(l.body) + '</textarea><span class="hint">Formato: «## » para subtítulos, «- » para listas y **texto** para negritas.</span></label>';
     } else if (k === "quiz") {
+      var EX = window.ACAEMAT_EXAMS || [];
+      if (EX.length) body += '<label class="tpl-pick">Cargar un modelo de examen <small>(opcional: luego puede editarlo)</small><select data-tpl><option value="">— Elegir modelo —</option>' +
+        EX.map(function (t) { return '<option value="' + t.id + '">' + A.esc(t.name) + " · " + A.esc(t.area) + " (" + t.questions.length + " preguntas)</option>"; }).join("") + "</select></label>";
       body += '<div data-qs style="display:grid;gap:12px"></div><button type="button" class="btn btn-line btn-sm" data-addq style="justify-self:start">+ Agregar pregunta</button><p class="hint">Marque con el círculo la respuesta correcta. Se aprueba con 70 %.</p>';
     }
     var d = UI.modal(src.title ? "Editar lección" : "Nueva lección", body, '<button class="btn btn-line btn-sm" data-x>Cancelar</button><button class="btn btn-navy btn-sm" data-ok>Guardar lección</button>');
@@ -258,7 +261,7 @@
 
     function drawQs() {
       $("[data-qs]").innerHTML = qs.map(function (q, i) {
-        return '<div class="qb" data-q="' + i + '"><div style="display:flex;gap:8px"><input data-qq value="' + A.esc(q.q) + '" placeholder="Pregunta ' + (i + 1) + '" /><button type="button" class="icon-btn danger" data-qdel title="Quitar pregunta">×</button></div>' +
+        return '<div class="qb" data-q="' + i + '"><div style="display:flex;gap:8px"><textarea data-qq rows="' + Math.min(4, Math.max(1, Math.ceil(q.q.length / 70))) + '" placeholder="Pregunta ' + (i + 1) + '" style="flex:1;resize:vertical">' + A.esc(q.q) + '</textarea><button type="button" class="icon-btn danger" data-qdel title="Quitar pregunta">×</button></div>' +
           q.o.map(function (o, j) { return '<div class="qb-opt"><input type="radio" name="ok' + i + '" value="' + j + '"' + (q.a === j ? " checked" : "") + ' title="Respuesta correcta" /><input data-qo="' + j + '" value="' + A.esc(o) + '" placeholder="Opción ' + (j + 1) + '" /></div>'; }).join("") +
           (q.o.length < 5 ? '<button type="button" class="btn btn-ghost btn-sm" data-qadd style="justify-self:start">+ opción</button>' : "") + "</div>";
       }).join("");
@@ -278,6 +281,18 @@
         drawQs();
       });
       $("[data-addq]").addEventListener("click", function () { qs.push({ q: "", o: ["", "", ""], a: 0 }); drawQs(); });
+      var tplSel = $("[data-tpl]");
+      if (tplSel) tplSel.addEventListener("change", function () {
+        var t = (window.ACAEMAT_EXAMS || []).filter(function (x) { return x.id === tplSel.value; })[0]; if (!t) return;
+        var hasContent = qs.some(function (q) { return q.q.trim(); });
+        var apply = function () {
+          qs = JSON.parse(JSON.stringify(t.questions));
+          if (!$("[data-title]").value.trim()) $("[data-title]").value = t.title;
+          drawQs(); A.toast("Modelo «" + t.name + "» cargado. Ajuste las preguntas a su curso.", "ok");
+        };
+        if (hasContent && !window.confirm("Se reemplazarán las preguntas actuales por el modelo «" + t.name + "». ¿Continuar?")) { tplSel.value = ""; return; }
+        apply();
+      });
     }
 
     $("[data-ok]").addEventListener("click", function () {

@@ -8,6 +8,8 @@ Academia de Capacitación y Adiestramiento para Enfermería, Medicina y Afines T
 - `index.html` + `site.css` — web pública, diseño propio "monitor clínico" (programas, método, credenciales, inscripción por WhatsApp)
 - `aula.html` — aula virtual de estudiantes (cursos, lecciones, evaluaciones, certificado)
 - `admin.html` — panel docente (crear programas, módulos, lecciones, subir videos/PDF, estudiantes, solicitudes)
+- `js/exam-templates.js` — biblioteca de 9 modelos de examen que el docente carga desde «+ Evaluación → Cargar un modelo de examen»
+- `guia-del-docente.pdf` — guía paso a paso para el docente, con los modelos de examen y una lista de cotejo imprimible
 
 ## Cuentas de demostración
 | Rol | Correo | Contraseña |
