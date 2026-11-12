@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Verificación de certificados · ACAEMAT Táchira</title>
+  <meta name="description" content="Verifique en línea la autenticidad de un certificado emitido por la Academia ACAEMAT." />
+  <meta name="theme-color" content="#1A3586" />
+  <link rel="icon" href="assets/img/favicon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500;1,9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css?v=20261112a" />
+  <link rel="stylesheet" href="app.css?v=20261112a" />
+</head>
+<body class="app">
+  <div class="verify">
+    <header class="verify-top">
+      <img src="assets/img/logo-acaemat-320.webp" alt="" width="44" height="44" />
+      <div><strong>ACAEMAT</strong><small>Verificación de certificados</small></div>
+      <a class="btn btn-line btn-sm" href="index.html">Ir a la web</a>
+    </header>
+    <main class="verify-main">
+      <section class="lookup">
+        <p class="eyebrow">Verificación en línea</p>
+        <h1>Compruebe la autenticidad de un certificado</h1>
+        <p>Escriba el código que aparece debajo del QR del certificado, o escanee el QR con la cámara de su teléfono.</p>
+        <form class="lookup-form" data-lookup>
+          <label class="sr" for="code">Código del certificado</label>
+          <input id="code" name="code" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="ACAEMAT-XXXXXX-XXXXXX" required />
+          <button class="btn btn-navy">Verificar</button>
+        </form>
+      </section>
+      <div data-out style="display:grid;gap:28px;scroll-margin-top:20px"></div>
+    </main>
+    <footer class="verify-foot">Academia de Capacitación y Adiestramiento para Enfermería, Medicina y Afines Táchira · RIF V-10176649-3 · M.P.P.E. Cód. R-003162001</footer>
+  </div>
+  <script defer src="js/config.js?v=20261112a"></script>
+  <script defer src="lib/qrcode.js?v=20261112a"></script>
+  <script defer src="js/cert.js?v=20261112a"></script>
+  <script defer src="js/verificar.js?v=20261112a"></script>
+</body>
+</html>
