@@ -93,7 +93,9 @@ h1, h2, h3, h4, p { margin: 0; }
 
 /* ---------- Cinta superior ---------- */
 .ticker { background: var(--navy-d); color: rgba(255,255,255,.72); font: 500 .72rem/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; }
-.ticker-in { max-width: var(--max); margin: 0 auto; padding: 10px var(--pad); display: flex; gap: 28px; align-items: center; }
+.ticker-in { max-width: var(--max); margin: 0 auto; padding: 10px var(--pad); display: flex; gap: 28px; align-items: center; overflow: hidden; }
+.ticker-in span { white-space: nowrap; }
+@media (max-width: 900px) { .ticker-in .hide-sm { display: none; } }
 .ticker-in span:last-child { margin-left: auto; }
 .live { display: inline-flex; align-items: center; gap: 8px; color: #fff; }
 .live i { width: 7px; height: 7px; border-radius: 50%; background: var(--red); animation: blink 1.2s steps(2) infinite; }
