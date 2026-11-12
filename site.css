@@ -446,3 +446,4 @@ h1, h2, h3, h4, p { margin: 0; }
 @media (prefers-reduced-motion: reduce) {
   .areas-track { animation-duration: 120s; }
 }
+@media (min-width: 721px) and (max-width: 1060px) { .mega { font-size: 11.5vw; } }

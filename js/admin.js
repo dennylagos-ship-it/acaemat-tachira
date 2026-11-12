@@ -52,7 +52,7 @@
       '<div class="stats">' +
         stat(cs.length, "programas a su cargo") + stat(lessons, "lecciones publicadas") + stat(Object.keys(studs).length, "estudiantes activos") + stat(completed, "programas aprobados") +
       "</div>" +
-      '<div class="editor" style="grid-template-columns:1.4fr 1fr">' +
+      '<div class="editor editor--dash">' +
         '<div class="panel"><h2>Avance por programa</h2>' + (cs.length ? '<div class="table-wrap" style="border:0"><table><thead><tr><th>Programa</th><th>Estudiantes</th><th>Avance promedio</th></tr></thead><tbody>' +
           cs.map(function (c) {
             var st = A.studentsOf(c.id), avg = st.length ? Math.round(st.reduce(function (s, e) { return s + A.progressOf(e.userId, c).pct; }, 0) / st.length) : 0;

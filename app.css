@@ -225,6 +225,7 @@ td .who small { display: block; color: var(--mute); }
 .toolbar input[type=search] { max-width: 320px; }
 
 .editor { display: grid; grid-template-columns: 380px 1fr; gap: 24px; align-items: start; }
+.editor--dash { grid-template-columns: 1.4fr 1fr; }
 .form-grid { display: grid; gap: 14px; }
 .switch { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: .75em 1em; border-radius: 3px; border: 1px solid var(--line); background: #fff; }
 .switch input { width: 42px; height: 24px; appearance: none; -webkit-appearance: none; border-radius: 99px; background: var(--bg-2); position: relative; cursor: pointer; padding: 0; border: 0; transition: background .2s; }
@@ -422,3 +423,7 @@ input, select, textarea { border-radius: 2px !important; }
 .lookup h1 { font-weight: 800; font-stretch: 70%; font-variation-settings: "wdth" 70; text-transform: uppercase; line-height: .92; font-size: clamp(2.2rem, 4.6vw, 3.6rem); }
 .lookup .eyebrow { color: #FF7D74; }
 .gold { background: none !important; -webkit-text-fill-color: currentColor; color: var(--gold) !important; }
+/* Tablas del panel: desplazamiento horizontal propio en teléfonos */
+.main-wrap, .main, .panel, .grid2, .cards > * { min-width: 0; }
+.table-wrap { max-width: 100%; -webkit-overflow-scrolling: touch; }
+@media (max-width: 560px) { .btn { white-space: normal; text-align: center; line-height: 1.3; } }
