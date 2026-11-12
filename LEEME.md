@@ -5,7 +5,7 @@ Academia de Capacitación y Adiestramiento para Enfermería, Medicina y Afines T
 > ⚠️ Datos provisionales por confirmar con el cliente: WhatsApp y correo (`js/config.js`), vigencia de certificados (2 años) y catálogo de cursos (`js/seed.js`).
 
 ## Páginas
-- `index.html` — web pública (programas, metodología, inscripción por WhatsApp)
+- `index.html` + `site.css` — web pública, diseño propio "monitor clínico" (programas, método, credenciales, inscripción por WhatsApp)
 - `aula.html` — aula virtual de estudiantes (cursos, lecciones, evaluaciones, certificado)
 - `admin.html` — panel docente (crear programas, módulos, lecciones, subir videos/PDF, estudiantes, solicitudes)
 

@@ -1,185 +1,212 @@
 <!doctype html>
-<html lang="es">
+<html lang="es" class="no-js">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ACAEMAT Táchira · Academia de Capacitación y Adiestramiento para Enfermería, Medicina y Afines</title>
-  <meta name="description" content="ACAEMAT Táchira: academia de capacitación y adiestramiento en enfermería, medicina y afines, inscrita en el MPPE. Auxiliar de enfermería, atención prehospitalaria, RCP, flebotomía y más, con aula virtual y certificado verificable." />
-  <meta name="theme-color" content="#1A3586" />
+  <title>ACAEMAT Táchira · Capacitación y Adiestramiento en Enfermería, Medicina y Afines</title>
+  <meta name="description" content="ACAEMAT Táchira: academia de capacitación y adiestramiento en enfermería, medicina y afines, inscrita en el M.P.P.E. Auxiliar de enfermería, atención prehospitalaria, RCP, flebotomía y más, con aula virtual y certificado verificable." />
+  <meta name="theme-color" content="#0B1638" />
   <link rel="icon" href="assets/img/favicon.png" />
   <link rel="apple-touch-icon" href="assets/img/apple-touch.png" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500;1,9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=20261112a" />
+  <link rel="preload" href="assets/fonts/archivo-var.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="site.css?v=20261112b" />
 </head>
-<body class="site">
+<body>
 
-  <!-- Splash -->
-  <div class="splash" data-splash aria-hidden="true">
-    <img src="assets/img/logo-medallon.webp" alt="" width="120" height="120" />
-    <span class="splash-line"></span>
+  <!-- Arranque: trazo de ECG -->
+  <div class="boot" data-splash aria-hidden="true">
+    <svg viewBox="0 0 300 60"><path d="M0 30h90l10-18 12 36 10-44 12 40 8-14h158" /></svg>
+    <span>ACAEMAT · TÁCHIRA</span>
   </div>
 
-  <!-- Navegación -->
-  <header class="nav" data-nav>
-    <a class="nav-brand" href="#inicio" aria-label="ACAEMAT Táchira, inicio">
-      <img src="assets/img/logo-acaemat-320.webp" alt="" width="44" height="44" />
+  <!-- Cinta superior -->
+  <div class="ticker" aria-label="Avisos">
+    <div class="ticker-in">
+      <span class="live"><i></i> Inscripciones abiertas</span>
+      <span>RIF V-10176649-3</span>
+      <span>M.P.P.E. Cód. R-003162001</span>
+      <span class="hide-sm" data-hours>Lunes a sábado · 8:00 a. m. – 5:00 p. m.</span>
+    </div>
+  </div>
+
+  <!-- Cabecera -->
+  <header class="top" data-nav>
+    <a class="brand" href="#inicio" aria-label="ACAEMAT Táchira, inicio">
+      <img src="assets/img/logo-acaemat-320.webp" alt="" width="46" height="46" />
       <span><strong>ACAEMAT</strong><small>Táchira</small></span>
     </a>
-    <nav class="nav-links" aria-label="Principal">
-      <a href="#programas">Programas</a>
-      <a href="#metodo">Cómo estudiamos</a>
-      <a href="#aval">La academia</a>
-      <a href="#inscripcion">Inscripción</a>
-      <a href="verificar.html">Verificar certificado</a>
+    <nav class="menu" aria-label="Principal">
+      <a href="#programas"><b>01</b>Programas</a>
+      <a href="#metodo"><b>02</b>Método</a>
+      <a href="#credenciales"><b>03</b>Credenciales</a>
+      <a href="#inscripcion"><b>04</b>Inscripción</a>
+      <a href="verificar.html"><b>05</b>Verificar</a>
     </nav>
-    <a class="btn btn-navy btn-sm" href="aula.html">Aula virtual</a>
-    <button class="nav-burger" data-burger aria-label="Abrir menú" aria-expanded="false"><span></span><span></span></button>
+    <a class="b b-red b-sm" href="aula.html">Aula virtual <span aria-hidden="true">↗</span></a>
+    <button class="burger" data-burger aria-label="Abrir menú" aria-expanded="false"><span></span><span></span><span></span></button>
   </header>
 
   <main id="inicio">
 
-    <!-- HERO -->
+    <!-- PORTADA -->
     <section class="hero">
-      <div class="hero-paper" aria-hidden="true">
-        <svg class="hero-pulse" viewBox="0 0 1200 120" preserveAspectRatio="none"><path d="M0 70 H300 l18 0 10-26 14 52 12-78 14 74 10-22 H640 l14 0 8-18 12 40 10-58 12 54 8-16 H1200" /></svg>
-      </div>
-      <div class="hero-copy">
-        <p class="eyebrow"><span class="dot"></span> Inscrita en el M.P.P.E. · <span style="white-space:nowrap">Cód. R-003162001</span></p>
-        <h1 class="hero-title" data-hero-title>
-          <span class="ln">Manos preparadas</span>
-          <span class="ln">para <em class="gold">cuidar la vida</em></span>
-          <span class="ln">en el Táchira.</span>
+      <div class="hero-text">
+        <p class="tag"><span class="cross">✚</span> Academia de Capacitación y Adiestramiento · Enfermería, Medicina y Afines</p>
+        <h1 class="mega" data-hero-title>
+          <span class="ln"><span>Capacitación</span></span>
+          <span class="ln"><span>que salva</span></span>
+          <span class="ln"><span class="red">vidas.</span></span>
         </h1>
-        <p class="hero-sub">Capacitación y adiestramiento en enfermería, medicina y áreas afines: práctica con instructores en sede y un aula virtual que le acompaña hasta el certificado.</p>
-        <div class="hero-actions">
-          <a class="btn btn-navy" href="#programas">Explorar programas <span aria-hidden="true">→</span></a>
-          <a class="btn btn-line" href="aula.html">Entrar al aula</a>
+        <div class="hero-foot">
+          <p class="lead">Formamos auxiliares, técnicos y profesionales de la salud en el Táchira: teoría en el aula virtual, destreza en sede con maniquíes y equipos reales, y un certificado que cualquiera puede verificar.</p>
+          <div class="cta">
+            <a class="b b-ink" href="#programas">Ver programas <span aria-hidden="true">→</span></a>
+            <a class="b b-line" href="#inscripcion">Reservar cupo</a>
+          </div>
         </div>
-        <dl class="hero-stats">
-          <div><dt><span data-count="programs">10</span></dt><dd>programas activos</dd></div>
-          <div><dt><span data-count="hours">600</span> h</dt><dd>de formación académica</dd></div>
-          <div><dt>QR</dt><dd>en cada certificado</dd></div>
-        </dl>
       </div>
 
-      <div class="hero-seal" data-seal>
-        <svg class="seal-ring" viewBox="0 0 400 400" aria-hidden="true">
-          <defs><path id="ring" d="M200,200 m-170,0 a170,170 0 1,1 340,0 a170,170 0 1,1 -340,0" /></defs>
-          <text><textPath href="#ring">CAPACITACIÓN · ADIESTRAMIENTO · ENFERMERÍA · MEDICINA Y AFINES · TÁCHIRA · </textPath></text>
-        </svg>
-        <div class="seal-glow" aria-hidden="true"></div>
-        <img class="seal-img" src="assets/img/logo-medallon.webp" alt="Escudo de ACAEMAT Táchira" width="640" height="640" fetchpriority="high" />
-        <div class="seal-card seal-card--a">
-          <span class="mini-ico">✓</span>
-          <div><strong>Certificado digital</strong><small>al aprobar cada programa</small></div>
+      <!-- Monitor de signos vitales -->
+      <aside class="monitor" data-seal aria-label="Resumen de la academia">
+        <div class="mon-top">
+          <span class="mon-id">ACAEMAT-TÁCHIRA · MONITOR 01</span>
+          <span class="mon-rec"><i></i> EN VIVO</span>
         </div>
-        <div class="seal-card seal-card--b">
-          <span class="mini-bar"><i style="width:72%"></i></span>
-          <div><strong>Su avance, en tiempo real</strong><small>72 % · Auxiliar de Enfermería</small></div>
+        <div class="mon-screen">
+          <div class="mon-trace" aria-hidden="true">
+            <svg class="ecg" viewBox="0 0 800 120" preserveAspectRatio="none"><path d="M0 70h60l8-6 8 6h30l6 10 10-62 10 76 8-24h40l14-10 14 10h76l8-6 8 6h30l6 10 10-62 10 76 8-24h40l14-10 14 10h76l8-6 8 6h30l6 10 10-62 10 76 8-24h40l14-10 14 10h56" /></svg>
+            <span class="sweep"></span>
+          </div>
+          <div class="mon-vitals">
+            <div class="v v-hr"><small>FC</small><strong data-hr>72</strong><em>lpm</em></div>
+            <div class="v v-sp"><small>SpO₂</small><strong>98</strong><em>%</em></div>
+          </div>
         </div>
-      </div>
+        <div class="mon-logo">
+          <img src="assets/img/logo-medallon.webp" alt="Escudo de ACAEMAT Táchira" width="640" height="640" fetchpriority="high" />
+          <p>Inscrita en el Ministerio del Poder Popular para la Educación<br /><b>Cód. R-003162001</b></p>
+        </div>
+        <dl class="mon-stats">
+          <div><dt>Programas</dt><dd data-count="programs">10</dd></div>
+          <div><dt>Horas</dt><dd data-count="hours">600</dd></div>
+          <div><dt>Certificado</dt><dd>QR</dd></div>
+        </dl>
+      </aside>
     </section>
 
-    <!-- Marquesina -->
-    <div class="marquee" aria-hidden="true">
-      <div class="marquee-track" data-marquee>
-        <span>Auxiliar de enfermería</span><i>✚</i><span>Atención prehospitalaria</span><i>✚</i><span>RCP</span><i>✚</i><span>Flebotomía</span><i>✚</i><span>Inyectología</span><i>✚</i><span>Electrocardiografía</span><i>✚</i><span>Farmacia</span><i>✚</i><span>Adulto mayor</span><i>✚</i>
+    <!-- Áreas -->
+    <div class="areas" aria-hidden="true">
+      <div class="areas-track">
+        <span>Enfermería</span><i>✚</i><span>Atención prehospitalaria</span><i>✚</i><span>Soporte vital</span><i>✚</i><span>Laboratorio clínico</span><i>✚</i><span>Farmacia</span><i>✚</i><span>Electrocardiografía</span><i>✚</i><span>Bioseguridad</span><i>✚</i><span>Cuidados</span><i>✚</i>
+        <span>Enfermería</span><i>✚</i><span>Atención prehospitalaria</span><i>✚</i><span>Soporte vital</span><i>✚</i><span>Laboratorio clínico</span><i>✚</i><span>Farmacia</span><i>✚</i><span>Electrocardiografía</span><i>✚</i><span>Bioseguridad</span><i>✚</i><span>Cuidados</span><i>✚</i>
       </div>
     </div>
 
     <!-- PROGRAMAS -->
-    <section class="programs" id="programas">
-      <div class="sec-head">
-        <p class="eyebrow">Programas 2026</p>
-        <h2 class="sec-title">Formación que se nota <em>junto a la camilla</em>.</h2>
-        <p class="sec-lead">Cada programa combina clases en el aula virtual, adiestramiento práctico supervisado y una evaluación final. Elija por área o recorra el catálogo completo.</p>
-      </div>
-      <div class="filters" role="tablist" aria-label="Filtrar por área" data-filters></div>
-      <div class="course-grid" data-course-grid>
+    <section class="sec programs" id="programas">
+      <header class="sec-head">
+        <p class="idx">01 / Programas</p>
+        <h2 class="h2">Elija su <span class="red">especialidad</span>.</h2>
+        <p class="sec-lead">Cada programa une clases en línea, adiestramiento práctico supervisado y una evaluación final. Toque un programa para ver su contenido completo.</p>
+      </header>
+      <div class="seg" role="tablist" aria-label="Filtrar por área" data-filters></div>
+      <div class="table" role="list" data-course-grid>
         <!-- Contenido mínimo sin JavaScript -->
-        <article class="course-card"><div class="course-body"><h3>Auxiliar de Enfermería</h3><p>Bases del cuidado al paciente y práctica clínica supervisada.</p></div></article>
-        <article class="course-card"><div class="course-body"><h3>Primeros Auxilios y RCP Básico</h3><p>Actúe con criterio en los primeros minutos de una emergencia.</p></div></article>
-        <article class="course-card"><div class="course-body"><h3>Flebotomía y Toma de Muestras</h3><p>Técnica de venopunción segura y orden correcto de tubos.</p></div></article>
-        <article class="course-card"><div class="course-body"><h3>Bioseguridad y Control de Infecciones</h3><p>Precauciones estándar e higiene de manos.</p></div></article>
+        <div class="row"><span class="r-n">01</span><span class="r-t">Auxiliar de Enfermería</span><span class="r-a">Enfermería</span><span class="r-h">160 h</span></div>
+        <div class="row"><span class="r-n">02</span><span class="r-t">Primeros Auxilios y RCP Básico</span><span class="r-a">Emergencias</span><span class="r-h">40 h</span></div>
+        <div class="row"><span class="r-n">03</span><span class="r-t">Atención Prehospitalaria Básica</span><span class="r-a">Emergencias</span><span class="r-h">80 h</span></div>
       </div>
     </section>
 
     <!-- MÉTODO -->
-    <section class="method" id="metodo">
-      <div class="method-inner">
-        <div class="method-copy">
-          <p class="eyebrow eyebrow--light">Cómo estudiamos</p>
-          <h2 class="sec-title light">La teoría en el teléfono, <em class="gold">la técnica en sus manos</em>.</h2>
-          <ol class="steps" data-steps>
-            <li><span class="n">01</span><div><h3>Se inscribe</h3><p>Elige su programa y la academia activa su cuenta personal.</p></div></li>
-            <li><span class="n">02</span><div><h3>Entra al aula</h3><p>Lecturas, clases grabadas y guías en PDF, disponibles desde el teléfono o la computadora.</p></div></li>
-            <li><span class="n">03</span><div><h3>Se adiestra en sede</h3><p>Lo que vio en video lo repite con maniquíes y equipos reales, con un instructor al lado.</p></div></li>
-            <li><span class="n">04</span><div><h3>Se certifica</h3><p>Aprueba las evaluaciones y descarga su certificado con código de verificación.</p></div></li>
-          </ol>
-        </div>
+    <section class="sec method" id="metodo">
+      <header class="sec-head">
+        <p class="idx">02 / Método</p>
+        <h2 class="h2">De la pantalla <span class="red">a la camilla</span>.</h2>
+      </header>
+      <ol class="flow">
+        <li><span class="fn">01</span><h3>Inscripción</h3><p>Elige su programa por WhatsApp o en esta web y la academia activa su cuenta personal.</p><span class="fi">Día 1</span></li>
+        <li><span class="fn">02</span><h3>Aula virtual</h3><p>Lecturas, clases grabadas y guías en PDF desde el teléfono o la computadora, a su ritmo.</p><span class="fi">24 / 7</span></li>
+        <li><span class="fn">03</span><h3>Adiestramiento</h3><p>Repite cada técnica en sede, con maniquíes y equipos reales y un instructor a su lado.</p><span class="fi">En sede</span></li>
+        <li><span class="fn">04</span><h3>Certificación</h3><p>Aprueba las evaluaciones y descarga su certificado con código QR y vigencia verificable.</p><span class="fi">Con QR</span></li>
+      </ol>
 
-        <!-- Maqueta del aula -->
-        <div class="device" aria-hidden="true">
-          <div class="device-bar"><i></i><i></i><i></i><span>acaemat táchira · aula virtual</span></div>
-          <div class="device-body">
-            <aside>
-              <p class="d-k">Módulo 2</p>
-              <p class="d-l done">Compresiones de alta calidad</p>
-              <p class="d-l done">Práctica guiada con maniquí</p>
-              <p class="d-l now">Evaluación: RCP en adultos</p>
-              <p class="d-k">Módulo 3</p>
-              <p class="d-l">Obstrucción de la vía aérea</p>
-              <p class="d-l">Hemorragias y quemaduras</p>
-            </aside>
-            <div class="d-main">
-              <p class="d-tag">Evaluación</p>
-              <p class="d-q">¿Cuál es la frecuencia recomendada de compresiones en un adulto?</p>
-              <p class="d-o">60 a 80 por minuto</p>
-              <p class="d-o sel">100 a 120 por minuto</p>
-              <p class="d-o">140 a 160 por minuto</p>
-              <div class="d-prog"><span>Progreso del curso</span><b><i data-demo-bar></i></b></div>
-            </div>
+      <!-- Vista del aula -->
+      <div class="peek">
+        <div class="peek-bar"><span>aula.acaemat · Auxiliar de Enfermería</span><span>Módulo 2 / 5</span></div>
+        <div class="peek-body">
+          <div class="peek-q">
+            <small>Evaluación · Signos vitales</small>
+            <p>¿Cuál es el rango normal de frecuencia cardíaca en un adulto en reposo?</p>
+            <ul>
+              <li>40 – 50 lpm</li>
+              <li class="ok">60 – 100 lpm</li>
+              <li>110 – 140 lpm</li>
+            </ul>
+          </div>
+          <div class="peek-prog">
+            <span>Avance del curso</span>
+            <b data-count-pct>0%</b>
+            <div class="bar"><i data-demo-bar></i></div>
+            <ul class="peek-mods">
+              <li class="done">Rol del auxiliar y ética</li>
+              <li class="now">Signos vitales</li>
+              <li>Higiene y movilización</li>
+              <li>Registros de enfermería</li>
+              <li>Práctica clínica</li>
+            </ul>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- AVAL -->
-    <section class="aval" id="aval">
-      <figure class="aval-quote">
-        <blockquote>«La lámpara encendida es nuestra promesa: nadie atiende a un paciente con más seguridad que quien se preparó a conciencia.»</blockquote>
-        <figcaption>Principio de la academia</figcaption>
-      </figure>
-      <div class="aval-grid">
-        <div class="aval-item"><span class="aval-k">Registro</span><strong>M.P.P.E. Cód. R-003162001</strong><p>Inscrita en el Ministerio del Poder Popular para la Educación.</p></div>
-        <div class="aval-item"><span class="aval-k">Identificación fiscal</span><strong>RIF V-10176649-3</strong><p>Academia formalmente constituida en el estado Táchira.</p></div>
-        <div class="aval-item"><span class="aval-k">Certificados verificables</span><strong>Código QR en cada certificado</strong><p>Empleadores e instituciones pueden comprobarlos en línea. <a href="verificar.html" style="color:var(--navy);font-weight:600">Verificar un certificado →</a></p></div>
-        <div class="aval-item"><span class="aval-k">Para instituciones</span><strong>Formación a la medida</strong><p>Programas cerrados para clínicas, ambulatorios, empresas y brigadas, en su sede o en la nuestra.</p></div>
+    <!-- CREDENCIALES -->
+    <section class="creds" id="credenciales">
+      <div class="creds-in">
+        <header class="sec-head">
+          <p class="idx light">03 / Credenciales</p>
+          <h2 class="h2 light">Respaldada, registrada y <span class="red">verificable</span>.</h2>
+        </header>
+        <div class="creds-grid">
+          <div class="cred"><small>Registro educativo</small><strong>M.P.P.E.</strong><code>Cód. R-003162001</code><p>Inscrita en el Ministerio del Poder Popular para la Educación.</p></div>
+          <div class="cred"><small>Identificación fiscal</small><strong>RIF</strong><code>V-10176649-3</code><p>Academia formalmente constituida en el estado Táchira.</p></div>
+          <div class="cred"><small>Certificados</small><strong>QR</strong><code>ACAEMAT-XXXXXX-XXXXXX</code><p>Cada certificado lleva un código único que empleadores e instituciones comprueban en línea.</p></div>
+          <div class="cred"><small>Instituciones</small><strong>In company</strong><code>Clínicas · Empresas · Brigadas</code><p>Programas cerrados en su sede o en la nuestra.</p></div>
+        </div>
+
+        <!-- Verificación rápida -->
+        <form class="quick-verify" action="verificar.html" method="get">
+          <label for="qv">¿Recibió un certificado de ACAEMAT? Verifíquelo aquí</label>
+          <div class="qv-row">
+            <input id="qv" name="c" placeholder="ACAEMAT-XXXXXX-XXXXXX" autocomplete="off" autocapitalize="characters" spellcheck="false" required />
+            <button class="b b-red" type="submit">Verificar</button>
+          </div>
+        </form>
       </div>
     </section>
 
     <!-- INSCRIPCIÓN -->
-    <section class="enroll" id="inscripcion">
+    <section class="sec enroll" id="inscripcion">
       <div class="enroll-copy">
-        <p class="eyebrow">Inscripción</p>
-        <h2 class="sec-title">Reserve su cupo en la <em>próxima cohorte</em>.</h2>
+        <p class="idx">04 / Inscripción</p>
+        <h2 class="h2">Reserve su cupo en la <span class="red">próxima cohorte</span>.</h2>
         <p class="sec-lead">Déjenos sus datos y le escribimos por WhatsApp con fechas, horario y forma de pago. Los cupos de práctica son limitados.</p>
-        <ul class="enroll-facts">
-          <li><span>Horario de atención</span><strong data-hours>Lunes a sábado · 8:00 a. m. – 5:00 p. m.</strong></li>
-          <li><span>WhatsApp</span><strong><a data-wa href="#">Escribir ahora</a></strong></li>
-        </ul>
+        <dl class="facts">
+          <div><dt>Atención</dt><dd data-hours>Lunes a sábado · 8:00 a. m. – 5:00 p. m.</dd></div>
+          <div><dt>WhatsApp</dt><dd><a data-wa href="#">Escribir ahora →</a></dd></div>
+          <div><dt>Sede</dt><dd>Estado Táchira, Venezuela</dd></div>
+        </dl>
       </div>
-      <form class="enroll-form" data-enroll novalidate>
+      <form class="form" data-enroll novalidate>
+        <div class="form-head"><span>Solicitud de inscripción</span><span>Formulario 04-A</span></div>
         <label>Nombre y apellido<input name="name" required autocomplete="name" /></label>
-        <div class="row2">
+        <div class="two">
           <label>Teléfono<input name="phone" required inputmode="tel" autocomplete="tel" placeholder="0414-0000000" /></label>
           <label>Correo <small>(opcional)</small><input name="email" type="email" autocomplete="email" /></label>
         </div>
         <label>Programa de interés<select name="courseId" data-course-select></select></label>
         <label>Mensaje <small>(opcional)</small><textarea name="message" rows="3" placeholder="¿Alguna pregunta?"></textarea></label>
-        <button class="btn btn-navy btn-block" type="submit">Solicitar inscripción</button>
+        <button class="b b-red b-block" type="submit">Enviar solicitud <span aria-hidden="true">→</span></button>
         <div class="form-ok" data-ok hidden>
           <svg viewBox="0 0 52 52" aria-hidden="true"><circle cx="26" cy="26" r="24" /><path d="M15 27l7 7 15-16" /></svg>
           <p><strong>¡Solicitud recibida!</strong> Abrimos WhatsApp para confirmar su cupo.</p>
@@ -189,27 +216,28 @@
   </main>
 
   <footer class="foot">
-    <div class="foot-brand">
-      <img src="assets/img/logo-acaemat-320.webp" alt="" width="64" height="64" loading="lazy" />
-      <p><strong>ACAEMAT Táchira</strong><br />Academia de Capacitación y Adiestramiento<br />para Enfermería, Medicina y Afines</p>
-    </div>
-    <div class="foot-cols">
-      <div><h4>Academia</h4><a href="#programas">Programas</a><a href="#metodo">Cómo estudiamos</a><a href="#inscripcion">Inscripción</a></div>
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <img src="assets/img/logo-acaemat-320.webp" alt="" width="72" height="72" loading="lazy" />
+        <p>Academia de Capacitación y Adiestramiento<br />para Enfermería, Medicina y Afines Táchira</p>
+      </div>
+      <div><h4>Academia</h4><a href="#programas">Programas</a><a href="#metodo">Método</a><a href="#inscripcion">Inscripción</a></div>
       <div><h4>Plataforma</h4><a href="aula.html">Aula virtual</a><a href="verificar.html">Verificar certificado</a><a href="admin.html">Acceso docentes</a></div>
       <div><h4>Legal</h4><span>RIF V-10176649-3</span><span>M.P.P.E. Cód. R-003162001</span></div>
     </div>
+    <p class="wordmark" aria-hidden="true">ACAEMAT</p>
     <p class="foot-note">© <span data-year>2026</span> ACAEMAT Táchira. Todos los derechos reservados.</p>
   </footer>
 
-  <!-- Detalle de programa -->
-  <dialog class="course-dialog" data-dialog>
-    <div class="dlg-inner" data-dialog-body></div>
+  <!-- Ficha del programa (panel lateral) -->
+  <dialog class="drawer" data-dialog>
+    <div class="drawer-in" data-dialog-body></div>
   </dialog>
 
-  <script defer src="lib/gsap.min.js?v=20261112a"></script>
-  <script defer src="js/config.js?v=20261112a"></script>
-  <script defer src="js/seed.js?v=20261112a"></script>
-  <script defer src="js/store.js?v=20261112a"></script>
-  <script defer src="js/main.js?v=20261112a"></script>
+  <script defer src="lib/gsap.min.js?v=20261112b"></script>
+  <script defer src="js/config.js?v=20261112b"></script>
+  <script defer src="js/seed.js?v=20261112b"></script>
+  <script defer src="js/store.js?v=20261112b"></script>
+  <script defer src="js/main.js?v=20261112b"></script>
 </body>
 </html>

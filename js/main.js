@@ -1,5 +1,6 @@
 /* =========================================================================
-   ACAEMAT — Sitio público
+   ACAEMAT Táchira — Sitio público (diseño "monitor clínico")
+   Patrón IIFE, cada init protegido con safe(): si uno falla, el resto sigue.
    ========================================================================= */
 (function () {
   "use strict";
@@ -9,30 +10,30 @@
   var hoverable = window.matchMedia("(hover: hover)").matches;
 
   function safe(fn, name) { try { fn(); } catch (e) { console.warn("[ACAEMAT] " + name, e); } }
-
   function published() { return A.db().courses.filter(function (c) { return c.published; }); }
+  function pad(n) { return (n < 10 ? "0" : "") + n; }
 
-  /* Splash */
+  /* Arranque con doble red de seguridad (CSS a los 4,5 s + JS) */
   function initSplash() {
     var s = $("[data-splash]"); if (!s) return;
     var hide = function () { s.classList.add("is-out"); };
-    if (document.readyState === "complete") setTimeout(hide, 500);
-    else window.addEventListener("load", function () { setTimeout(hide, 350); });
-    setTimeout(hide, 3800);
+    if (document.readyState === "complete") setTimeout(hide, 700);
+    else window.addEventListener("load", function () { setTimeout(hide, 600); });
+    setTimeout(hide, 3600);
   }
 
-  /* Navegación */
+  /* Cabecera */
   function initNav() {
     var nav = $("[data-nav]"), burger = $("[data-burger]");
-    var onScroll = function () { nav.classList.toggle("is-scrolled", window.scrollY > 30); };
+    var onScroll = function () { nav.classList.toggle("is-scrolled", window.scrollY > 40); };
     window.addEventListener("scroll", onScroll, { passive: true }); onScroll();
     burger.addEventListener("click", function () {
       var o = nav.classList.toggle("is-open"); burger.setAttribute("aria-expanded", o);
     });
-    $$(".nav-links a").forEach(function (a) { a.addEventListener("click", function () { nav.classList.remove("is-open"); }); });
+    $$(".menu a").forEach(function (a) { a.addEventListener("click", function () { nav.classList.remove("is-open"); burger.setAttribute("aria-expanded", false); }); });
   }
 
-  /* Cifras reales calculadas del catálogo */
+  /* Cifras reales del catálogo, con conteo animado */
   function initStats() {
     var list = published();
     var data = { programs: list.length, hours: list.reduce(function (s, c) { return s + (+c.hours || 0); }, 0) };
@@ -41,7 +42,7 @@
       el.textContent = to;
       var io = new IntersectionObserver(function (es) {
         if (!es[0].isIntersecting) return; io.disconnect();
-        var t0 = performance.now(), dur = 1400;
+        var t0 = performance.now(), dur = 1500;
         (function tick(t) {
           var p = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - p, 3);
           el.textContent = Math.round(to * e); if (p < 1) requestAnimationFrame(tick);
@@ -51,82 +52,95 @@
     });
   }
 
-  /* Catálogo */
-  function cardHTML(c) {
-    return '<article class="course-card reveal" tabindex="0" role="button" data-id="' + c.id + '" data-cat="' + A.esc(c.category) + '" aria-label="Ver programa ' + A.esc(c.title) + '">' +
-      (c.featured ? '<span class="badge-feat">Destacado</span>' : "") +
-      A.coverHTML(c) +
-      '<div class="course-body"><h3>' + A.esc(c.title) + "</h3><p>" + A.esc(c.summary) + "</p></div>" +
-      '<div class="course-meta"><span>' + A.esc(c.level) + "</span><span>" + A.esc(c.modality) + "</span><span>" + c.modules.length + " módulos</span></div>" +
+  /* Monitor: frecuencia cardíaca que oscila como un monitor real */
+  function initMonitor() {
+    var hr = $("[data-hr]"); if (!hr) return;
+    var v = 72;
+    setInterval(function () {
+      v = Math.max(68, Math.min(78, v + Math.round(Math.random() * 4 - 2)));
+      hr.textContent = v;
+    }, 1600);
+    // El escudo se inclina ligeramente con el puntero
+    if (!hoverable) return;
+    var mon = $("[data-seal]"), img = $(".mon-logo img", mon);
+    mon.addEventListener("pointermove", function (e) {
+      var r = mon.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5;
+      img.style.transform = "perspective(600px) rotateY(" + x * 16 + "deg) rotateX(" + (-y * 16) + "deg)";
+    });
+    mon.addEventListener("pointerleave", function () { img.style.transform = ""; });
+  }
+
+  /* Catálogo como tabla clínica */
+  function rowHTML(c, i) {
+    return '<article class="row" role="listitem" tabindex="0" data-id="' + c.id + '" data-cat="' + A.esc(c.category) + '" style="--c:' + (c.color || "#12307A") + '" aria-label="Ver programa ' + A.esc(c.title) + '">' +
+      '<span class="r-n">' + pad(i + 1) + "</span>" +
+      '<span class="r-i">' + A.icon(c.icon) + "</span>" +
+      '<span class="r-t"><b>' + A.esc(c.title) + "</b><small>" + A.esc(c.summary) + "</small></span>" +
+      '<span class="r-a">' + A.esc(c.category) + "</span>" +
+      '<span class="r-m">' + A.esc(c.modality) + " · " + A.esc(c.level) + "</span>" +
+      '<span class="r-h">' + c.hours + " h</span>" +
+      '<span class="r-go" aria-hidden="true">→</span>' +
+      (c.featured ? '<span class="r-flag">Destacado</span>' : "") +
       "</article>";
   }
   function initCatalog() {
     var grid = $("[data-course-grid]"), filters = $("[data-filters]");
     var list = published().sort(function (a, b) { return (b.featured ? 1 : 0) - (a.featured ? 1 : 0); });
-    grid.innerHTML = list.map(cardHTML).join("");
-    A.hydrateCovers(grid);
+    grid.innerHTML = '<div class="thead" aria-hidden="true"><span>N.º</span><span></span><span>Programa</span><span>Área</span><span>Modalidad</span><span>Duración</span><span></span></div>' + list.map(rowHTML).join("");
 
     var cats = {}; list.forEach(function (c) { cats[c.category] = (cats[c.category] || 0) + 1; });
     var chips = [["Todos", list.length]].concat(Object.keys(cats).map(function (k) { return [k, cats[k]]; }));
     filters.innerHTML = chips.map(function (c, i) {
-      return '<button class="chip" role="tab" aria-selected="' + (i === 0) + '" data-f="' + A.esc(c[0]) + '">' + A.esc(c[0]) + "<b>" + c[1] + "</b></button>";
+      return '<button class="seg-b" role="tab" aria-selected="' + (i === 0) + '" data-f="' + A.esc(c[0]) + '">' + A.esc(c[0]) + "<sup>" + c[1] + "</sup></button>";
     }).join("");
     filters.addEventListener("click", function (e) {
-      var b = e.target.closest(".chip"); if (!b) return;
-      $$(".chip", filters).forEach(function (x) { x.setAttribute("aria-selected", x === b); });
-      var f = b.getAttribute("data-f");
-      $$(".course-card", grid).forEach(function (card) {
-        var show = f === "Todos" || card.getAttribute("data-cat") === f;
-        card.classList.toggle("is-hidden", !show);
-        if (show) card.classList.add("is-visible");
+      var b = e.target.closest(".seg-b"); if (!b) return;
+      $$(".seg-b", filters).forEach(function (x) { x.setAttribute("aria-selected", x === b); });
+      var f = b.getAttribute("data-f"), n = 0;
+      $$(".row", grid).forEach(function (r) {
+        var show = f === "Todos" || r.getAttribute("data-cat") === f;
+        r.classList.toggle("is-hidden", !show);
+        if (show) { n++; $(".r-n", r).textContent = pad(n); r.classList.add("is-visible"); }
       });
     });
 
-    grid.addEventListener("click", function (e) { var c = e.target.closest(".course-card"); if (c) openCourse(c.getAttribute("data-id")); });
+    grid.addEventListener("click", function (e) { var r = e.target.closest(".row[data-id]"); if (r) openCourse(r.getAttribute("data-id")); });
     grid.addEventListener("keydown", function (e) {
       if (e.key !== "Enter" && e.key !== " ") return;
-      var c = e.target.closest(".course-card"); if (c) { e.preventDefault(); openCourse(c.getAttribute("data-id")); }
+      var r = e.target.closest(".row[data-id]"); if (r) { e.preventDefault(); openCourse(r.getAttribute("data-id")); }
     });
 
-    // selector del formulario
     var sel = $("[data-course-select]");
     sel.innerHTML = '<option value="">Aún no lo decido</option>' + list.map(function (c) { return '<option value="' + c.id + '">' + A.esc(c.title) + "</option>"; }).join("");
-
-    initTilt();
   }
 
-  /* Inclinación 3D + halo en tarjetas */
-  function initTilt() {
-    if (!hoverable) return;
-    $$(".course-card").forEach(function (card) {
-      if (card.dataset.tilt) return; card.dataset.tilt = "1";
-      card.addEventListener("pointermove", function (e) {
-        var r = card.getBoundingClientRect(), x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
-        card.style.setProperty("--mx", x * 100 + "%"); card.style.setProperty("--my", y * 100 + "%");
-        card.style.transform = "perspective(900px) rotateX(" + ((0.5 - y) * 7) + "deg) rotateY(" + ((x - 0.5) * 7) + "deg) translateY(-4px)";
-      });
-      card.addEventListener("pointerleave", function () { card.style.transform = ""; });
-    });
-  }
-
-  /* Detalle del programa */
+  /* Ficha del programa en panel lateral */
   function openCourse(id) {
     var c = A.courseById(id); if (!c) return;
     var dlg = $("[data-dialog]"), body = $("[data-dialog-body]");
+    var lessons = 0; c.modules.forEach(function (m) { lessons += m.lessons.length; });
     body.innerHTML =
-      '<button class="dlg-close" data-close aria-label="Cerrar">×</button>' +
-      A.coverHTML(c) +
-      '<div class="dlg-body">' +
-      '<p class="eyebrow">' + A.esc(c.category) + "</p>" +
-      "<h2>" + A.esc(c.title) + "</h2>" +
-      '<div class="dlg-facts"><span>' + c.hours + " horas</span><span>" + A.esc(c.modality) + "</span><span>Nivel " + A.esc(c.level).toLowerCase() + "</span><span>Certificado</span></div>" +
-      "<p>" + A.esc(c.description) + "</p>" +
-      '<div class="syllabus">' + c.modules.map(function (m, i) {
-        return "<details" + (i === 0 ? " open" : "") + "><summary>Módulo " + (i + 1) + " · " + A.esc(m.title) + "</summary><ul>" +
-          m.lessons.map(function (l) { return "<li>" + A.esc(l.title) + " <small>(" + A.KIND[l.kind] + ")</small></li>"; }).join("") + "</ul></details>";
-      }).join("") + "</div>" +
-      '<div class="dlg-actions"><a class="btn btn-line" href="aula.html#/curso/' + c.id + '">Ver en el aula</a><button class="btn btn-navy" data-pick="' + c.id + '">Solicitar inscripción</button></div>' +
-      "</div>";
+      '<div class="dr-head" style="--c:' + (c.color || "#12307A") + '" data-cover="' + A.esc(c.coverId || "") + '">' +
+        '<button class="dr-close" data-close aria-label="Cerrar">✕</button>' +
+        '<span class="dr-cat">' + A.esc(c.category) + "</span>" +
+        '<span class="dr-ico">' + A.icon(c.icon) + "</span>" +
+        "<h2>" + A.esc(c.title) + "</h2>" +
+      "</div>" +
+      '<dl class="dr-facts">' +
+        "<div><dt>Duración</dt><dd>" + c.hours + " h</dd></div>" +
+        "<div><dt>Modalidad</dt><dd>" + A.esc(c.modality) + "</dd></div>" +
+        "<div><dt>Nivel</dt><dd>" + A.esc(c.level) + "</dd></div>" +
+        "<div><dt>Módulos</dt><dd>" + c.modules.length + "</dd></div>" +
+      "</dl>" +
+      '<div class="dr-body">' +
+        "<p>" + A.esc(c.description) + "</p>" +
+        '<h3>Contenido programático <small>' + lessons + " lecciones</small></h3>" +
+        '<ol class="dr-mods">' + c.modules.map(function (m, i) {
+          return "<li><details" + (i === 0 ? " open" : "") + "><summary><b>" + pad(i + 1) + "</b>" + A.esc(m.title) + "</summary><ul>" +
+            m.lessons.map(function (l) { return "<li>" + A.esc(l.title) + " <small>" + A.KIND[l.kind] + "</small></li>"; }).join("") + "</ul></details></li>";
+        }).join("") + "</ol>" +
+      "</div>" +
+      '<div class="dr-actions"><a class="b b-line" href="aula.html#/curso/' + c.id + '">Ver en el aula</a><button class="b b-red" data-pick="' + c.id + '">Solicitar inscripción →</button></div>';
     A.hydrateCovers(body);
     if (dlg.showModal) dlg.showModal(); else dlg.setAttribute("open", "");
   }
@@ -144,11 +158,11 @@
     });
   }
 
-  /* Formulario de inscripción → solicitud + WhatsApp */
+  /* Inscripción → solicitud en el panel + WhatsApp */
   function initForm() {
     var f = $("[data-enroll]"), ok = $("[data-ok]");
     $("[data-wa]").href = A.waLink("Hola ACAEMAT Táchira, quisiera información sobre sus programas.");
-    $("[data-hours]").textContent = CFG.brand.hours;
+    $$("[data-hours]").forEach(function (el) { el.textContent = CFG.brand.hours; });
     f.addEventListener("submit", function (e) {
       e.preventDefault();
       var d = Object.fromEntries(new FormData(f).entries()), bad = false;
@@ -166,38 +180,31 @@
     });
   }
 
-  /* Sello del hero: sigue suavemente al puntero */
-  function initSeal() {
-    if (!hoverable) return;
-    var seal = $("[data-seal]"), img = $(".seal-img", seal);
-    window.addEventListener("pointermove", function (e) {
-      var x = e.clientX / window.innerWidth - 0.5, y = e.clientY / window.innerHeight - 0.5;
-      img.style.transform = "translate3d(" + x * 18 + "px," + y * 18 + "px,0) rotate(" + x * 4 + "deg)";
-    }, { passive: true });
-  }
-
   /* Entrada del titular */
   function initHeroIntro() {
     if (!window.gsap) return;
-    var lines = $$("[data-hero-title] .ln");
-    gsap.from(lines, { yPercent: 60, opacity: 0, duration: 1.2, stagger: 0.12, ease: "expo.out", delay: 0.55, clearProps: "all" });
-    gsap.from(".hero-sub, .hero-actions, .hero-stats", { y: 24, opacity: 0, duration: 1, stagger: 0.1, ease: "expo.out", delay: 0.9, clearProps: "all" });
-    gsap.from(".seal-img", { scale: 0.85, opacity: 0, duration: 1.6, ease: "expo.out", delay: 0.5, clearProps: "opacity" });
+    gsap.from("[data-hero-title] .ln > span", { yPercent: 105, duration: 1.1, stagger: 0.1, ease: "expo.out", delay: 0.75, clearProps: "transform" });
+    gsap.from(".hero .tag, .hero-foot", { y: 20, opacity: 0, duration: 0.9, stagger: 0.12, ease: "expo.out", delay: 1, clearProps: "all" });
+    gsap.from(".monitor", { x: 40, opacity: 0, duration: 1.2, ease: "expo.out", delay: 0.85, clearProps: "all" });
   }
 
-  /* Revelado al hacer scroll (con red de seguridad) */
+  /* Revelado al hacer scroll (umbral bajo + red de seguridad a los 6 s) */
   function initReveal() {
-    $$(".sec-head, .steps li, .device, .aval-quote, .aval-item, .enroll-copy, .enroll-form").forEach(function (el) { el.classList.add("reveal"); });
+    $$(".sec-head, .flow li, .peek, .cred, .quick-verify, .enroll-copy, .form, .row").forEach(function (el) { el.classList.add("reveal"); });
     var io = new IntersectionObserver(function (es) {
       es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("is-visible"); io.unobserve(e.target); } });
     }, { threshold: 0.01, rootMargin: "0px 0px -4% 0px" });
-    $$(".reveal").forEach(function (el, i) { el.style.transitionDelay = (i % 3) * 70 + "ms"; io.observe(el); });
-    setTimeout(function () {
-      $$(".reveal:not(.is-visible)").forEach(function (el) { if (el.getBoundingClientRect().top < window.innerHeight) el.classList.add("is-visible"); });
-    }, 6000);
-    // barra de la maqueta
-    var bar = $("[data-demo-bar]");
-    if (bar) new IntersectionObserver(function (es, o) { if (es[0].isIntersecting) { bar.style.width = "84%"; o.disconnect(); } }, { threshold: 0.05 }).observe(bar);
+    $$(".reveal").forEach(function (el, i) { el.style.transitionDelay = (i % 4) * 60 + "ms"; io.observe(el); });
+    setTimeout(function () { $$(".reveal:not(.is-visible)").forEach(function (el) { el.classList.add("is-visible"); }); }, 6000);
+
+    // Barra y porcentaje de la vista del aula
+    var bar = $("[data-demo-bar]"), pct = $("[data-count-pct]");
+    if (bar) new IntersectionObserver(function (es, o) {
+      if (!es[0].isIntersecting) return; o.disconnect();
+      bar.style.width = "38%";
+      var t0 = performance.now();
+      (function tick(t) { var p = Math.min(1, (t - t0) / 1400); pct.textContent = Math.round(38 * (1 - Math.pow(1 - p, 3))) + "%"; if (p < 1) requestAnimationFrame(tick); })(t0);
+    }, { threshold: 0.05 }).observe(bar);
   }
 
   document.addEventListener("DOMContentLoaded", function () {
@@ -207,9 +214,9 @@
     safe(initNav, "nav");
     safe(initCatalog, "catalog");
     safe(initStats, "stats");
+    safe(initMonitor, "monitor");
     safe(initDialog, "dialog");
     safe(initForm, "form");
-    safe(initSeal, "seal");
     safe(initHeroIntro, "hero");
     safe(initReveal, "reveal");
   });

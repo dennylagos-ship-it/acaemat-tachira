@@ -23,7 +23,7 @@
   };
 
   window.ACAEMAT_CONFIG = {
-    version: "20261112",
+    version: "20261112b",
     brand: {
       short: "ACAEMAT",
       name: "Academia de Capacitación y Adiestramiento para Enfermería, Medicina y Afines Táchira",
