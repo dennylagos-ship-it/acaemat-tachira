@@ -1,11 +1,12 @@
 /* =========================================================================
    ACAEMAT — Aula virtual (estudiantes)
-   Rutas: #/  ·  #/catalogo  ·  #/curso/:id  ·  #/curso/:id/:leccion  ·  #/certificado/:id  ·  #/perfil
+   Rutas: #/  ·  #/clases  ·  #/catalogo  ·  #/curso/:id  ·  #/curso/:id/:leccion  ·  #/certificado/:id  ·  #/perfil
    ========================================================================= */
 (function () {
   "use strict";
   var A = window.ACAEMAT, UI = window.ACAEMAT_UI, CFG = window.ACAEMAT_CONFIG;
-  var root, main, user;
+  var root, main, user, tick = null;
+  var L = window.ACAEMAT_LIVE;
 
   function staff() { return user.role !== "student"; }
   function myCourses() {
@@ -21,17 +22,44 @@
     var key = parts[0] || "inicio";
     var items = [
       { key: "inicio", href: "#/", icon: "book", label: "Mis cursos" },
+      { key: "clases", href: "#/clases", icon: "cal", label: "Clases en vivo", count: liveNow() },
       { key: "catalogo", href: "#/catalogo", icon: "folder", label: "Catálogo" },
       { key: "perfil", href: "#/perfil", icon: "hands", label: "Mi perfil" }
     ];
     if (staff()) items.push("-", { key: "panel", href: "admin.html", icon: "shield", label: "Panel docente" });
     main = UI.renderShell(root, user, items, key === "curso" || key === "certificado" ? "inicio" : key, "Aula virtual");
     window.scrollTo(0, 0);
+    if (tick) { clearInterval(tick); tick = null; }
+    if (key === "clases") return viewLive();
     if (key === "catalogo") return viewCatalog();
     if (key === "perfil") return viewProfile();
     if (key === "curso") return parts[2] ? viewLesson(parts[1], parts[2]) : viewCourse(parts[1]);
     if (key === "certificado") return viewCert(parts[1]);
     viewHome();
+  }
+
+  /* ---------- Clases en vivo ---------- */
+  function myLive() { return L.forCourses(myCourses().map(function (c) { return c.id; })); }
+  function liveNow() { return myLive().filter(function (c) { var s = L.status(c); return s === "vivo" || s === "pronto"; }).length; }
+  function nextLive() { var now = Date.now(); return myLive().filter(function (c) { return L.end(c) > now; })[0] || null; }
+  function liveBanner() {
+    var c = nextLive(); if (!c) return "";
+    var co = A.courseById(c.courseId), s = L.status(c), join = L.canJoin(c);
+    return '<section class="live-banner lv-' + s + '" style="--c:' + (co ? co.color : "#12307A") + '">' +
+      '<div class="lb-ico">' + A.icon("live") + "</div>" +
+      '<div class="lb-txt"><span class="lb-k">' + (s === "vivo" ? '<i></i>En vivo ahora' : "Próxima clase en vivo") + "</span>" +
+        "<h2>" + A.esc(c.title) + "</h2>" +
+        "<p>" + A.esc(L.dayLabel(c.start)) + " · " + L.time(c.start) + " – " + L.time(L.end(c)) + (co ? " · " + A.esc(co.title) : "") + "</p></div>" +
+      '<div class="lb-act">' + (s === "prox" ? '<span class="lb-count" data-count>' + L.until(c).replace(/^en /, "Empieza en ") + "</span>" : "") +
+        (join ? '<a class="btn btn-gold" target="_blank" rel="noopener" href="' + A.esc(c.url) + '">Entrar a la clase →</a>' :
+          '<a class="btn btn-line" href="#/clases">Ver calendario</a>') + "</div></section>";
+  }
+  function startTick(fn) { if (tick) clearInterval(tick); tick = setInterval(fn, 30e3); }
+  function viewLive() {
+    main.innerHTML = '<div class="page-head"><div><h1>Clases en vivo</h1><p>' + (staff() ? "Clases programadas en sus programas. Para programar o editar, use el panel docente." : "Su calendario de clases. El botón «Entrar a la clase» se activa 10 minutos antes de empezar.") + "</p></div>" +
+      (staff() ? '<a class="btn btn-navy" href="admin.html#/clases">Programar clase</a>' : "") + "</div><div data-cal></div>";
+    var cal = L.mount(main.querySelector("[data-cal]"), { mode: "student", classes: myLive });
+    startTick(cal.render);
   }
 
   /* ---------- Mis cursos ---------- */
@@ -53,10 +81,12 @@
     main.innerHTML =
       '<div class="page-head"><div><h1>Hola, ' + A.esc(first) + ".</h1><p>" + (staff() ? "Estos son los programas a su cargo." : "Continúe donde lo dejó.") + "</p></div>" +
       (next ? '<a class="btn btn-navy" href="#/curso/' + next.c.id + "/" + next.l.id + '">Continuar: ' + A.esc(next.l.title) + " →</a>" : "") + "</div>" +
+      '<div data-banner>' + liveBanner() + "</div>" +
       (list.length ? '<div class="grid-cards">' + list.map(function (c) { return courseCard(c, "#/curso/" + c.id); }).join("") + "</div>" :
         '<div class="empty">' + A.icon("book") + "<h3>Aún no tiene cursos activos</h3><p>Explore el catálogo y solicite su inscripción. La academia activará su acceso.</p>" +
         '<a class="btn btn-navy" href="#/catalogo">Ver catálogo</a></div>');
     A.hydrateCovers(main);
+    startTick(function () { var b = main.querySelector("[data-banner]"); if (b) b.innerHTML = liveBanner(); });
   }
 
   /* ---------- Catálogo ---------- */
@@ -94,6 +124,7 @@
         (ok && !staff() ? '<div style="margin-top:18px;display:grid;gap:6px;max-width:420px"><div class="bar"><i style="width:' + p.pct + '%"></i></div><span class="hint">' + p.pct + " % completado</span></div>" : "") +
         '<div class="actions">' + cta + "</div>" +
       "</div>" + A.coverHTML(c) + "</section>" +
+      (ok ? courseLive(c) : "") +
       '<div class="panel"><h2>Contenido del programa</h2>' +
       c.modules.map(function (m, i) {
         return '<p class="syl-mod">Módulo ' + (i + 1) + " · " + A.esc(m.title) + "</p>" +
@@ -106,6 +137,12 @@
       A.toast("Solicitud enviada. Le avisaremos al activar su acceso.", "ok");
       viewCourse(id);
     });
+  }
+  function courseLive(c) {
+    var now = Date.now(), up = L.forCourses([c.id]).filter(function (x) { return L.end(x) > now; }).slice(0, 3);
+    if (!up.length) return "";
+    return '<div class="panel live-panel"><div class="lp-head"><h2>Clases en vivo</h2><a class="btn btn-ghost btn-sm" href="#/clases">Ver calendario →</a></div>' +
+      up.map(function (x) { return L.card(x, staff() ? "staff-view" : "student"); }).join("") + "</div>";
   }
   function lessonLink(c, l, current, ok) {
     var done = A.progressOf(user.id, c).map[l.id];

@@ -9,6 +9,7 @@ Academia de Capacitación y Adiestramiento para Enfermería, Medicina y Afines T
 - `aula.html` — aula virtual de estudiantes (cursos, lecciones, evaluaciones, certificado)
 - `admin.html` — panel docente (crear programas, módulos, lecciones, subir videos/PDF, estudiantes, solicitudes)
 - `js/exam-templates.js` — biblioteca de 9 modelos de examen que el docente carga desde «+ Evaluación → Cargar un modelo de examen»
+- `js/clases.js` — clases en vivo: calendario mensual en aula y panel, programación por Google Meet, Zoom, Jitsi o YouTube Live, clases semanales, botón «Entrar» 10 min antes, grabaciones como lección
 - `guia-del-docente.pdf` — guía paso a paso para el docente, con los modelos de examen y una lista de cotejo imprimible
 
 ## Cuentas de demostración

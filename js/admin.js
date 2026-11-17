@@ -1,11 +1,12 @@
 /* =========================================================================
    ACAEMAT — Panel docente / administración
-   Rutas: #/  ·  #/cursos  ·  #/curso/:id|nuevo  ·  #/estudiantes  ·  #/solicitudes  ·  #/docentes
+   Rutas: #/  ·  #/clases  ·  #/cursos  ·  #/curso/:id|nuevo  ·  #/estudiantes  ·  #/solicitudes  ·  #/docentes
    ========================================================================= */
 (function () {
   "use strict";
   var A = window.ACAEMAT, UI = window.ACAEMAT_UI, CFG = window.ACAEMAT_CONFIG;
-  var root, main, user;
+  var root, main, user, tick = null;
+  var L = window.ACAEMAT_LIVE;
   var KSHORT = { text: "TXT", video: "VID", pdf: "PDF", file: "ARC", link: "URL", quiz: "EVA" };
 
   function isAdmin() { return user.role === "admin"; }
@@ -22,6 +23,7 @@
     var items = [
       { key: "inicio", href: "#/", icon: "ecg", label: "Resumen" },
       { key: "cursos", href: "#/cursos", icon: "book", label: "Programas" },
+      { key: "clases", href: "#/clases", icon: "cal", label: "Clases en vivo" },
       { key: "estudiantes", href: "#/estudiantes", icon: "hands", label: "Estudiantes" },
       { key: "solicitudes", href: "#/solicitudes", icon: "folder", label: "Solicitudes", count: newLeads() },
       { key: "certificados", href: "#/certificados", icon: "award", label: "Certificados" }
@@ -30,6 +32,8 @@
     items.push("-", { key: "aula", href: "aula.html", icon: "cross", label: "Ver el aula" }, { key: "web", href: "index.html", icon: "heart", label: "Ver la web" });
     main = UI.renderShell(root, user, items, key === "curso" ? "cursos" : key, "Panel docente");
     window.scrollTo(0, 0);
+    if (tick) { clearInterval(tick); tick = null; }
+    if (key === "clases") return viewLive();
     if (key === "cursos") return viewCourses();
     if (key === "curso") return viewEditor(parts[1]);
     if (key === "estudiantes") return viewStudents();
@@ -52,6 +56,7 @@
       '<div class="stats">' +
         stat(cs.length, "programas a su cargo") + stat(lessons, "lecciones publicadas") + stat(Object.keys(studs).length, "estudiantes activos") + stat(completed, "programas aprobados") +
       "</div>" +
+      dashLive() +
       '<div class="editor editor--dash">' +
         '<div class="panel"><h2>Avance por programa</h2>' + (cs.length ? '<div class="table-wrap" style="border:0"><table><thead><tr><th>Programa</th><th>Estudiantes</th><th>Avance promedio</th></tr></thead><tbody>' +
           cs.map(function (c) {
@@ -61,12 +66,37 @@
         '<div class="panel"><h2>Solicitudes recientes</h2>' + leadsMini() + '<p style="margin-top:14px"><a class="btn btn-line btn-sm" href="#/solicitudes">Ver todas</a></p></div>' +
       "</div>" +
       (isAdmin() ? '<p class="hint" style="margin-top:30px">Modo demostración: los datos se guardan en este navegador. <button class="btn btn-ghost btn-sm" data-reset>Restablecer datos de ejemplo</button></p>' : "");
+    main.querySelectorAll("[data-edit]").forEach(function (b) { b.addEventListener("click", function () { L.editor(UI, myCourses(), L.byId(b.dataset.edit), user, viewDash); }); });
     var r = main.querySelector("[data-reset]");
     if (r) r.addEventListener("click", function () {
       UI.confirm("Se borrarán los cambios y archivos subidos y se cargarán de nuevo los cursos de ejemplo.", "Restablecer").then(function (ok) {
         if (!ok) return; A.reset(); A.login("admin@acaemat.edu.ve", "admin123"); A.toast("Datos de ejemplo restablecidos.", "ok"); route();
       });
     });
+  }
+  function dashLive() {
+    var now = Date.now(), up = L.forCourses(myCourses().map(function (c) { return c.id; })).filter(function (c) { return L.end(c) > now; }).slice(0, 3);
+    return '<div class="panel live-panel" style="margin-bottom:24px"><div class="lp-head"><h2>Próximas clases en vivo</h2><a class="btn btn-line btn-sm" href="#/clases">Abrir calendario</a></div>' +
+      (up.length ? '<div class="lv-row">' + up.map(function (c) { return L.card(c, "staff"); }).join("") + "</div>" : '<p class="hint">No hay clases programadas. <a href="#/clases">Programe la primera</a>.</p>') + "</div>";
+  }
+
+  /* ---------- Clases en vivo ---------- */
+  function viewLive() {
+    var cs = myCourses();
+    main.innerHTML = '<div class="page-head"><div><h1>Clases en vivo</h1><p>Programe clases por Google Meet, Zoom, Jitsi o YouTube Live. Sus estudiantes las verán en el calendario del aula con el botón para entrar.</p></div>' +
+      (cs.length ? '<button class="btn btn-navy" data-new-live>+ Programar clase</button>' : "") + "</div>" +
+      (cs.length ? "<div data-cal></div>" : '<div class="empty">' + A.icon("cal") + '<h3>Primero cree un programa</h3><a class="btn btn-navy" href="#/curso/nuevo">Crear programa</a></div>');
+    if (!cs.length) return;
+    var cal;
+    function open(preset) { L.editor(UI, cs, preset, user, function () { cal.render(); }); }
+    cal = L.mount(main.querySelector("[data-cal]"), {
+      mode: "staff",
+      classes: function () { return L.forCourses(cs.map(function (c) { return c.id; })); },
+      onAdd: function (date) { open(date ? { date: date.getTime() } : null); },
+      onOpen: function (id) { open(L.byId(id)); }
+    });
+    main.querySelector("[data-new-live]").addEventListener("click", function () { open(null); });
+    tick = setInterval(cal.render, 30e3);
   }
   function stat(n, l) { return '<div class="stat"><b>' + n + "</b><span>" + l + "</span></div>"; }
   function leadsMini() {

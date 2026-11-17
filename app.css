@@ -429,3 +429,94 @@ input, select, textarea { border-radius: 2px !important; }
 @media (max-width: 560px) { .btn { white-space: normal; text-align: center; line-height: 1.3; } }
 .tpl-pick { padding: 14px; background: var(--bg); border-left: 3px solid var(--gold); }
 .tpl-pick select { margin-top: 6px; background: #fff; }
+
+/* =========================================================================
+   Clases en vivo y calendario
+   ========================================================================= */
+.cal-wrap { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(300px, 1fr); gap: 24px; align-items: start; }
+.cal { background: var(--paper); border: 1px solid var(--line); padding: 18px; }
+.cal-head { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
+.cal-head h2 { flex: 1; text-align: center; font-family: var(--f-display); font-weight: 800; font-stretch: 70%; font-variation-settings: "wdth" 70; text-transform: uppercase; font-size: 1.7rem; line-height: 1; }
+.cal-head .icon-btn { width: 38px; height: 38px; border: 1.5px solid var(--ink); background: transparent; font-size: 1.3rem; cursor: pointer; border-radius: 2px; }
+.cal-head .icon-btn:hover { background: var(--ink); color: #fff; }
+.cal-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); border-top: 2px solid var(--ink); border-left: 1px solid var(--line); }
+.cal-wd { font-family: var(--f-mono); font-size: .66rem; letter-spacing: .14em; text-transform: uppercase; color: var(--mute); padding: 8px 6px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); background: var(--bg); }
+.cal-day { position: relative; min-height: 104px; padding: 6px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); cursor: pointer; display: flex; flex-direction: column; gap: 4px; transition: background .2s; outline: none; }
+.cal-day:hover, .cal-day:focus-visible { background: var(--bg); }
+.cal-day.out { background: repeating-linear-gradient(135deg, transparent 0 6px, rgba(11,18,32,.025) 6px 7px); }
+.cal-day.out .cal-n { color: #B5BDC9; }
+.cal-n { font-family: var(--f-mono); font-size: .8rem; font-weight: 500; width: 26px; height: 26px; display: grid; place-items: center; }
+.cal-day.today .cal-n { background: var(--gold); color: #fff; border-radius: 50%; }
+.cal-day.sel { box-shadow: inset 0 0 0 2px var(--ink); background: var(--bg); }
+.cal-ev { display: grid; gap: 3px; min-width: 0; }
+.cal-chip { display: block; width: 100%; text-align: left; border: 0; border-left: 3px solid var(--c); background: color-mix(in srgb, var(--c) 10%, #fff); color: var(--ink); font-size: .7rem; line-height: 1.3; padding: 3px 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; border-radius: 1px; }
+.cal-chip b { font-family: var(--f-mono); font-weight: 500; }
+.cal-chip:hover { background: var(--c); color: #fff; }
+.cal-chip.fin { opacity: .5; }
+.cal-chip.vivo, .cal-chip.pronto { background: var(--gold); border-left-color: var(--ink); color: #fff; }
+.cal-more { font-size: .68rem; color: var(--mute); padding-left: 4px; }
+.cal-dots { display: none; gap: 3px; justify-content: center; }
+.cal-dots i { width: 6px; height: 6px; border-radius: 50%; background: var(--c); }
+
+.agenda { display: grid; gap: 12px; }
+.agenda-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; border-bottom: 2px solid var(--ink); padding-bottom: 8px; }
+.agenda-head h2, .lp-head h2 { font-family: var(--f-display); font-weight: 800; font-stretch: 70%; font-variation-settings: "wdth" 70; text-transform: uppercase; font-size: 1.35rem; line-height: 1.05; }
+.agenda-sub { font-family: var(--f-mono); font-size: .68rem; letter-spacing: .14em; text-transform: uppercase; color: var(--mute); margin-top: 10px; }
+.agenda-empty { display: grid; justify-items: center; gap: 10px; text-align: center; padding: 30px 16px; background: var(--paper); border: 1px dashed var(--line); color: var(--mute); }
+.agenda-empty .ico { width: 42px; height: 42px; }
+
+.lv-card { display: grid; grid-template-columns: 58px minmax(0, 1fr); background: var(--paper); border: 1px solid var(--line); border-left: 4px solid var(--c); }
+.lv-date { display: grid; align-content: start; justify-items: center; padding: 12px 4px; border-right: 1px solid var(--line); background: var(--bg); }
+.lv-date b { font-family: var(--f-mono); font-size: 1.5rem; font-weight: 500; line-height: 1; }
+.lv-date span { font-family: var(--f-mono); font-size: .62rem; letter-spacing: .14em; text-transform: uppercase; color: var(--mute); margin-top: 4px; }
+.lv-info { padding: 12px 14px; display: grid; gap: 6px; min-width: 0; }
+.lv-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.lv-plat { font-family: var(--f-mono); font-size: .64rem; letter-spacing: .1em; text-transform: uppercase; color: var(--mute); }
+.lv-info h3 { font-size: 1rem; font-weight: 700; line-height: 1.25; }
+.lv-meta { font-size: .8rem; color: var(--ink-2); }
+.lv-notes { font-size: .8rem; color: var(--mute); border-left: 2px solid var(--line); padding-left: 8px; }
+.lv-act { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.lv-act .btn[disabled] { opacity: .45; cursor: not-allowed; }
+.lv-fin { opacity: .78; }
+.pill.live-on { background: var(--gold); color: #fff; }
+.pill.live-on i { width: 7px; height: 7px; border-radius: 50%; background: #fff; animation: livePulse 1.2s ease-in-out infinite; }
+.pill.live-soon { background: rgba(224,50,43,.12); color: var(--gold); }
+@keyframes livePulse { 50% { opacity: .25; } }
+
+.live-banner { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 18px; align-items: center; margin: -6px 0 28px; padding: 18px 22px; background: var(--navy-3); color: #fff; border-left: 6px solid var(--c); background-image: linear-gradient(rgba(59,240,122,.06) 1px, transparent 1px), linear-gradient(90deg, rgba(59,240,122,.06) 1px, transparent 1px); background-size: 22px 22px; }
+.live-banner.lv-vivo, .live-banner.lv-pronto { border-left-color: var(--gold); }
+.lb-ico { width: 54px; height: 54px; display: grid; place-items: center; background: rgba(255,255,255,.08); }
+.lb-ico .ico { width: 32px; height: 32px; color: #fff; }
+.lb-k { display: inline-flex; align-items: center; gap: 8px; font-family: var(--f-mono); font-size: .68rem; letter-spacing: .16em; text-transform: uppercase; color: #FF8A82; }
+.lb-k i { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); animation: livePulse 1.2s ease-in-out infinite; }
+.live-banner h2 { font-size: 1.25rem; font-weight: 700; margin: 4px 0 2px; color: #fff; text-transform: none; font-stretch: 100%; font-variation-settings: "wdth" 100; line-height: 1.2; }
+.live-banner p { color: rgba(255,255,255,.7); font-size: .88rem; margin: 0; }
+.lb-act { display: grid; gap: 8px; justify-items: end; }
+.lb-count { font-family: var(--f-mono); font-size: .82rem; color: #3BF07A; }
+.live-banner .btn-line { color: #fff; border-color: rgba(255,255,255,.5); }
+
+.live-panel .lp-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
+.live-panel > .lv-card + .lv-card { margin-top: 10px; }
+.lv-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+
+.row3 { display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: 14px; }
+.url-row { display: flex; gap: 8px; width: 100%; }
+.url-row input { flex: 1; min-width: 0; }
+fieldset.rec { border: 1px solid var(--line); padding: 12px 14px 14px; display: grid; gap: 12px; margin: 0; }
+fieldset.rec legend { font-family: var(--f-mono); font-size: .68rem; letter-spacing: .14em; text-transform: uppercase; color: var(--gold); padding: 0 6px; }
+label.check { display: flex; align-items: center; gap: 8px; font-weight: 500; }
+label.check input { width: auto; }
+
+@media (max-width: 1100px) { .cal-wrap { grid-template-columns: 1fr; } }
+@media (max-width: 640px) {
+  .cal { padding: 10px; }
+  .cal-day { min-height: 54px; align-items: center; padding: 4px 2px; }
+  .cal-ev { display: none; }
+  .cal-dots { display: flex; }
+  .cal-head h2 { font-size: 1.3rem; }
+  .row3 { grid-template-columns: 1fr 1fr; }
+  .row3 label:last-child { grid-column: 1 / -1; }
+  .live-banner { grid-template-columns: 1fr; gap: 12px; }
+  .lb-ico { display: none; }
+  .lb-act { justify-items: start; }
+}
