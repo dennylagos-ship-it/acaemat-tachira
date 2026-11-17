@@ -201,6 +201,13 @@
     setTimeout(function () { t.remove(); }, 3300);
   }
   function waLink(text) { return "https://wa.me/" + CFG.brand.whatsapp + "?text=" + encodeURIComponent(text); }
+  /* Google Drive: /file/d/ID/view, open?id=ID o uc?id=ID  →  reproductor /preview */
+  function driveEmbed(url) {
+    var u = String(url || "");
+    if (!/drive\.google\.com/i.test(u)) return "";
+    var m = u.match(/\/file\/d\/([\w-]{20,})/) || u.match(/[?&]id=([\w-]{20,})/);
+    return m ? "https://drive.google.com/file/d/" + m[1] + "/preview" : "";
+  }
   function youtubeEmbed(url) {
     var m = String(url || "").match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([\w-]{11})/);
     return m ? "https://www.youtube-nocookie.com/embed/" + m[1] : "";
@@ -214,6 +221,6 @@
     isEnrolled: isEnrolled, enrollmentsOf: enrollmentsOf, studentsOf: studentsOf, progressOf: progressOf, canEdit: canEdit,
     upsertCourse: upsertCourse, deleteCourse: deleteCourse, enroll: enroll, unenroll: unenroll, markLesson: markLesson,
     addLead: addLead, updateUser: updateUser, deleteUser: deleteUser,
-    icon: icon, coverHTML: coverHTML, hydrateCovers: hydrateCovers, md: md, toast: toast, waLink: waLink, youtubeEmbed: youtubeEmbed, KIND: KIND
+    icon: icon, coverHTML: coverHTML, hydrateCovers: hydrateCovers, md: md, toast: toast, waLink: waLink, youtubeEmbed: youtubeEmbed, driveEmbed: driveEmbed, KIND: KIND
   };
 })();

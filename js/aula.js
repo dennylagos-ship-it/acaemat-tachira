@@ -208,6 +208,9 @@
         });
       } else if (A.youtubeEmbed(l.url)) {
         el.innerHTML = '<div class="media"><iframe src="' + A.youtubeEmbed(l.url) + '" title="' + A.esc(l.title) + '" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen loading="lazy"></iframe></div>' + notes;
+      } else if (A.driveEmbed(l.url)) {
+        el.innerHTML = '<div class="media"><iframe src="' + A.driveEmbed(l.url) + '" title="' + A.esc(l.title) + '" allow="autoplay; fullscreen" allowfullscreen loading="lazy"></iframe></div>' +
+          '<p class="hint" style="margin-top:8px">Si el video no carga, pida a la academia que lo comparta como «Cualquier persona con el enlace».</p>' + notes;
       } else if (/^https?:.*\.(mp4|webm)(\?|$)/i.test(l.url || "")) {
         el.innerHTML = '<div class="media"><video controls playsinline src="' + A.esc(l.url) + '"></video></div>' + notes;
       } else el.innerHTML = placeholder("video", l.body);
