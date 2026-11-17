@@ -30,3 +30,17 @@ Desde el Resumen del panel (cuenta admin) se pueden restablecer los cursos de ej
 
 ## Ajustes rápidos
 WhatsApp, horario y datos legales: `js/config.js`.
+
+## Alumnos y pagos (solo administración)
+- `js/pagos.js`: precios y cuotas por programa, tasa del día, métodos de pago (pago móvil, transferencia, Zelle, Binance, efectivo), verificación de pagos con comprobante, recibos numerados (comprobante interno, no sustituye factura fiscal), estados de cuenta, morosos con recordatorio por WhatsApp, reportes y reglas de solvencia.
+- El estudiante ve «Mis pagos» en el aula y reporta sus pagos con foto del comprobante (se comprime automáticamente).
+- El docente solo ve si el alumno está solvente, al día o moroso. Nunca ve montos.
+- Reglas configurables: días de gracia; los morosos no presentan evaluaciones; el certificado exige el programa pagado.
+
+## Respaldo y app de escritorio
+- `js/respaldo.js` + `lib/xlsx.full.min.js` (SheetJS, Apache-2.0): Excel con hojas Usuarios, Inscripciones, Programas, Cuotas, Pagos, Clases en vivo y Solicitudes, más copia completa en JSON.
+- `admin.webmanifest` + `sw.js`: el panel se instala como aplicación en Windows desde Chrome o Edge (menú «Respaldo y app»).
+
+## Base de datos real (Supabase) — preparada, NO aplicada
+- `supabase/schema.sql`: tablas, plan de pago automático al inscribir, recibos numerados, seguridad por roles (RLS) y almacenamiento para PDF y comprobantes. Probado en PostgreSQL 16 con los tres roles.
+- Se ejecuta una sola vez en el SQL Editor del proyecto de la academia; luego se conecta el código.

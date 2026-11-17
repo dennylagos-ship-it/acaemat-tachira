@@ -6,7 +6,7 @@
   "use strict";
   var A = window.ACAEMAT, UI = window.ACAEMAT_UI, CFG = window.ACAEMAT_CONFIG;
   var root, main, user, tick = null;
-  var L = window.ACAEMAT_LIVE;
+  var L = window.ACAEMAT_LIVE, PAY = window.ACAEMAT_PAY;
 
   function staff() { return user.role !== "student"; }
   function myCourses() {
@@ -24,19 +24,24 @@
       { key: "inicio", href: "#/", icon: "book", label: "Mis cursos" },
       { key: "clases", href: "#/clases", icon: "cal", label: "Clases en vivo", count: liveNow() },
       { key: "catalogo", href: "#/catalogo", icon: "folder", label: "Catálogo" },
+      staff() ? null : { key: "pagos", href: "#/pagos", icon: "award", label: "Mis pagos", count: payAlert() },
       { key: "perfil", href: "#/perfil", icon: "hands", label: "Mi perfil" }
     ];
     if (staff()) items.push("-", { key: "panel", href: "admin.html", icon: "shield", label: "Panel docente" });
+    items = items.filter(Boolean);
     main = UI.renderShell(root, user, items, key === "curso" || key === "certificado" ? "inicio" : key, "Aula virtual");
     window.scrollTo(0, 0);
     if (tick) { clearInterval(tick); tick = null; }
     if (key === "clases") return viewLive();
+    if (key === "pagos" && !staff()) return PAY.studentView(main, user, UI);
     if (key === "catalogo") return viewCatalog();
     if (key === "perfil") return viewProfile();
     if (key === "curso") return parts[2] ? viewLesson(parts[1], parts[2]) : viewCourse(parts[1]);
     if (key === "certificado") return viewCert(parts[1]);
     viewHome();
   }
+
+  function payAlert() { var s = PAY.userState(user.id); return s === "moroso" || s === "vencido" ? 1 : 0; }
 
   /* ---------- Clases en vivo ---------- */
   function myLive() { return L.forCourses(myCourses().map(function (c) { return c.id; })); }
@@ -234,6 +239,11 @@
   function renderQuiz(el, c, l, done) {
     var qs = []; try { qs = JSON.parse(l.body || "[]"); } catch (e) {}
     if (!qs.length) { el.innerHTML = '<div class="empty"><h3>Evaluación en preparación</h3></div>'; return; }
+    if (!done && !staff() && PAY.quizBlocked(user.id, c.id)) {
+      el.innerHTML = '<div class="empty">' + A.icon("shield") + "<h3>Evaluación en pausa</h3><p>Tiene una cuota vencida en este programa. Puede seguir viendo las clases, pero para presentar evaluaciones debe ponerse al día.</p>" +
+        '<a class="btn btn-navy" href="#/pagos">Ver mis pagos y reportar un pago</a></div>';
+      return;
+    }
     el.innerHTML = '<form class="quiz" data-quiz>' + qs.map(function (q, i) {
       return '<div class="q"><p>' + (i + 1) + ". " + A.esc(q.q) + "</p>" + q.o.map(function (o, j) {
         return '<label><input type="radio" name="q' + i + '" value="' + j + '" required /> ' + A.esc(o) + "</label>";
@@ -268,6 +278,11 @@
     var p = A.progressOf(user.id, c);
     if (p.pct < 100 || staff()) {
       main.innerHTML = '<div class="empty">' + A.icon("shield") + "<h3>Certificado aún no disponible</h3><p>Complete todas las lecciones y evaluaciones del programa (" + p.pct + " % actual).</p><a class=\"btn btn-navy\" href=\"#/curso/" + c.id + '">Ir al curso</a></div>';
+      return;
+    }
+    if (PAY.certBlocked(user.id, c.id)) {
+      main.innerHTML = '<div class="empty">' + A.icon("award") + "<h3>¡Programa completado!</h3><p>Su certificado se habilita cuando el programa esté pagado por completo. Revise su saldo en «Mis pagos».</p>" +
+        '<a class="btn btn-navy" href="#/pagos">Ver mis pagos</a></div>';
       return;
     }
     var last = Math.max.apply(null, A.allLessons(c).map(function (l) { return p.map[l.id] || 0; }));

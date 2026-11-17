@@ -6,7 +6,9 @@
   "use strict";
   var A = window.ACAEMAT, UI = window.ACAEMAT_UI, CFG = window.ACAEMAT_CONFIG;
   var root, main, user, tick = null;
-  var L = window.ACAEMAT_LIVE;
+  var L = window.ACAEMAT_LIVE, PAY = window.ACAEMAT_PAY, BK = window.ACAEMAT_BACKUP;
+  var installEvt = null;
+  window.addEventListener("beforeinstallprompt", function (e) { e.preventDefault(); installEvt = e; });
   var KSHORT = { text: "TXT", video: "VID", pdf: "PDF", file: "ARC", link: "URL", quiz: "EVA" };
 
   function isAdmin() { return user.role === "admin"; }
@@ -28,7 +30,9 @@
       { key: "solicitudes", href: "#/solicitudes", icon: "folder", label: "Solicitudes", count: newLeads() },
       { key: "certificados", href: "#/certificados", icon: "award", label: "Certificados" }
     ];
-    if (isAdmin()) items.push({ key: "docentes", href: "#/docentes", icon: "shield", label: "Docentes" });
+    if (isAdmin()) items.push({ key: "docentes", href: "#/docentes", icon: "shield", label: "Docentes" },
+      { key: "pagos", href: "#/pagos", icon: "award", label: "Pagos", count: PAY.pendingCount() },
+      { key: "respaldo", href: "#/respaldo", icon: "folder", label: "Respaldo y app" });
     items.push("-", { key: "aula", href: "aula.html", icon: "cross", label: "Ver el aula" }, { key: "web", href: "index.html", icon: "heart", label: "Ver la web" });
     main = UI.renderShell(root, user, items, key === "curso" ? "cursos" : key, "Panel docente");
     window.scrollTo(0, 0);
@@ -40,6 +44,8 @@
     if (key === "solicitudes") return viewLeads();
     if (key === "certificados") return viewCerts();
     if (key === "docentes" && isAdmin()) return viewTeachers();
+    if (key === "pagos" && isAdmin()) return PAY.adminView(main, user, UI, parts[1], route);
+    if (key === "respaldo" && isAdmin()) return viewBackup();
     viewDash();
   }
 
@@ -75,6 +81,14 @@
     });
   }
   function dashLive() {
+    var pay = "";
+    if (isAdmin()) {
+      var pend = PAY.pendingCount(), late = PAY.accounts().filter(function (a) { return PAY.statement(a).state === "moroso"; }).length;
+      if (pend || late) pay = '<p class="note-bar">' + (pend ? '<a href="#/pagos/verificar"><b>' + pend + (pend === 1 ? " pago" : " pagos") + "</b> por verificar</a>" : "") + (pend && late ? " · " : "") + (late ? '<a href="#/pagos/morosos"><b>' + late + (late === 1 ? " estudiante moroso" : " estudiantes morosos") + "</b></a>" : "") + "</p>";
+    }
+    return pay + dashLive2();
+  }
+  function dashLive2() {
     var now = Date.now(), up = L.forCourses(myCourses().map(function (c) { return c.id; })).filter(function (c) { return L.end(c) > now; }).slice(0, 3);
     return '<div class="panel live-panel" style="margin-bottom:24px"><div class="lp-head"><h2>Próximas clases en vivo</h2><a class="btn btn-line btn-sm" href="#/clases">Abrir calendario</a></div>' +
       (up.length ? '<div class="lv-row">' + up.map(function (c) { return L.card(c, "staff"); }).join("") + "</div>" : '<p class="hint">No hay clases programadas. <a href="#/clases">Programe la primera</a>.</p>') + "</div>";
@@ -97,6 +111,31 @@
     });
     main.querySelector("[data-new-live]").addEventListener("click", function () { open(null); });
     tick = setInterval(cal.render, 30e3);
+  }
+  /* ---------- Respaldo y aplicación de escritorio ---------- */
+  function viewBackup() {
+    var last = BK.last(), standalone = window.matchMedia("(display-mode: standalone)").matches;
+    main.innerHTML = '<div class="page-head"><div><h1>Respaldo y app</h1><p>Guarde una copia de los datos de la academia en esta computadora e instale el panel como una aplicación.</p></div></div>' +
+      '<div class="editor editor--dash">' +
+        '<div class="panel"><h2>Respaldo en esta PC</h2>' +
+          '<p>Descarga un archivo de Excel con una hoja por tema: usuarios, inscripciones, programas, cuotas, pagos, clases en vivo y solicitudes. Se abre en Excel o Google Sheets.</p>' +
+          '<p class="hint">Último respaldo en este equipo: <b>' + (last ? A.fmtDate(last) : "nunca") + "</b>. Recomendamos descargarlo una vez por semana y guardarlo en una carpeta fija (por ejemplo, Documentos › ACAEMAT › Respaldos).</p>" +
+          '<div class="acct-act"><button class="btn btn-navy" data-xlsx>Descargar respaldo en Excel</button><button class="btn btn-line" data-json>Copia completa (JSON)</button></div>' +
+          '<p class="hint" style="margin-top:10px">La copia completa guarda todos los datos tal como están en la plataforma, para restaurarlos si hiciera falta.</p></div>' +
+        '<div class="panel"><h2>Panel en el escritorio</h2>' +
+          (standalone ? '<p class="pill ok">Ya está usando el panel como aplicación.</p>' :
+          '<p>Instale el panel como una aplicación de Windows: tendrá su ícono en el escritorio y en el menú Inicio, y se abrirá en su propia ventana, sin pestañas.</p>' +
+          '<div class="acct-act"><button class="btn btn-navy" data-install>Instalar en esta PC</button></div>' +
+          '<p class="hint" data-install-help hidden>Si el botón no responde: en Chrome o Edge, pulse el ícono de instalar en la barra de direcciones (una pantalla con una flecha) o abra el menú ⋮ y elija «Instalar» o «Aplicaciones › Instalar este sitio como una aplicación».</p>') +
+          '<p class="hint" style="margin-top:10px">La aplicación usa los mismos datos en línea que la web: lo que haga en la PC lo ven al instante los docentes y estudiantes.</p></div>' +
+      "</div>";
+    main.querySelector("[data-xlsx]").addEventListener("click", function () { BK.excel().then(function () { setTimeout(viewBackup, 400); }); });
+    main.querySelector("[data-json]").addEventListener("click", function () { BK.json(); setTimeout(viewBackup, 400); });
+    var ib = main.querySelector("[data-install]");
+    if (ib) ib.addEventListener("click", function () {
+      if (installEvt) { installEvt.prompt(); installEvt.userChoice.then(function (r) { if (r.outcome === "accepted") A.toast("Panel instalado. Búsquelo en su escritorio o en el menú Inicio.", "ok"); installEvt = null; }); }
+      else main.querySelector("[data-install-help]").hidden = false;
+    });
   }
   function stat(n, l) { return '<div class="stat"><b>' + n + "</b><span>" + l + "</span></div>"; }
   function leadsMini() {
@@ -361,7 +400,7 @@
       q = (q || "").toLowerCase();
       main.querySelector("[data-rows]").innerHTML = studs.filter(function (u) { return !q || (u.name + u.email + u.cedula).toLowerCase().indexOf(q) >= 0; }).map(function (u) {
         var en = A.enrollmentsOf(u.id).filter(function (e) { return isAdmin() || ids.indexOf(e.courseId) >= 0; });
-        return '<tr data-u="' + u.id + '"><td><div class="who"><span class="avatar">' + UI.initials(u.name) + "</span><div><strong>" + A.esc(u.name) + "</strong><small>" + A.esc(u.cedula || "—") + "</small></div></div></td>" +
+        return '<tr data-u="' + u.id + '"><td><div class="who"><span class="avatar">' + UI.initials(u.name) + "</span><div><strong>" + A.esc(u.name) + "</strong><small>" + A.esc(u.cedula || "—") + "</small><div style=\"margin-top:4px\">" + PAY.pill(PAY.userState(u.id)) + "</div></div></div></td>" +
           "<td>" + A.esc(u.email) + "<br /><small class=\"hint\">" + A.esc(u.phone || "") + "</small></td>" +
           '<td style="min-width:240px">' + (en.length ? en.map(function (e) {
             var c = A.courseById(e.courseId); if (!c) return ""; var p = A.progressOf(u.id, c);
